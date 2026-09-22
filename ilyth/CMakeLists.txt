@@ -1,0 +1,29 @@
+file(GLOB_RECURSE ILYTH_SOURCES CONFIGURE_DEPENDS *.cpp *.c *.cc)
+file(GLOB_RECURSE ILYTH_HEADERS CONFIGURE_DEPENDS *.h *.hpp)
+
+add_library(ilyth STATIC ${ILYTH_SOURCES} ${ILYTH_HEADERS})
+
+target_include_directories(ilyth
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_compile_options(ilyth PRIVATE
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-Werror>
+)
+
+target_link_libraries(ilyth PUBLIC ilyth_options)
+
+install(TARGETS ilyth
+    EXPORT ilythTargets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(FILES ${ILYTH_HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ilyth
+)
