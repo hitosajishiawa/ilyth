@@ -2,6 +2,8 @@
 
 学习 [磐石服务器框架](https://space.bilibili.com/286948214/channel/collectiondetail) 过程中的个人实践。
 
+相比教程的 C++20 ，作为追新族，本项目进一步地使用 C++23 标准。未来编译器实现趋于完善后考虑迁移到 C++26 标准。
+
 > Notice：源代码充斥个人喜好，大量使用现代 C++ 风格特性，例如大量使用 `auto` 。
 
 > Fun Fact: 项目名读作 *EYE-lith*，取 *Alice* 之意。
