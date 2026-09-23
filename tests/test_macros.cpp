@@ -9,7 +9,7 @@ int main()
 {
 #ifdef ILYTH_DEBUG
     std::println(
-        "Compiled in debug mode. Assert failure will bring termination.");
+        "Compiled in debug mode. Assert failure will lead to termination.");
 #endif
 
 #ifdef NDEBUG
