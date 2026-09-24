@@ -8,18 +8,17 @@
 
 using namespace ilyth::types;
 
-namespace
-{
-
 // Every function below runs the *same* check over the *same* data. The only
 // difference is the statement written after a failed check, which is the whole
 // point: the macro expands to a plain call, so `break`, `continue` and
 // `return` keep their usual meaning instead of hitting a wrapper loop.
+namespace
+{
 
 constexpr auto Records = std::array<s64, 6>{1, 2, -3, 4, -5, 6};
 
 // (1) example for *assert_break*
-auto sum_until_bad(std::span<const s64> values)
+auto sumUntilBad(std::span<const s64> values)
 {
     auto sum = s64{};
     for (auto v : values)
@@ -34,7 +33,7 @@ auto sum_until_bad(std::span<const s64> values)
 }
 
 // (2) example for *assert_continue*
-auto sum_skipping_bad(std::span<const s64> values)
+auto sumSkippingBad(std::span<const s64> values)
 {
     auto sum = s64{};
     for (auto v : values)
@@ -49,7 +48,7 @@ auto sum_skipping_bad(std::span<const s64> values)
 }
 
 // (3) example for *assert_return*
-auto sum_or_zero(std::span<const s64> values)
+auto sumOrZero(std::span<const s64> values)
 {
     auto sum = s64{};
     for (auto v : values)
@@ -64,7 +63,7 @@ auto sum_or_zero(std::span<const s64> values)
 }
 
 // (4) example for *assert_noeffect*
-auto sum_ignoring_bad(std::span<const s64> values)
+auto sumIgnoringBad(std::span<const s64> values)
 {
     auto sum = s64{};
     for (auto v : values)
@@ -92,13 +91,13 @@ int main()
 
     std::println("records = {{1, 2, -3, 4, -5, 6}}");
     std::println("[1] break    -> sum until the first bad record = {}",
-                 sum_until_bad(Records));
+                 sumUntilBad(Records));
     std::println("[2] continue -> sum skipping bad records       = {}",
-                 sum_skipping_bad(Records));
+                 sumSkippingBad(Records));
     std::println("[3] return   -> all-or-nothing sum             = {}",
-                 sum_or_zero(Records));
+                 sumOrZero(Records));
     std::println("[4] assert   -> sum ignoring bad records       = {}",
-                 sum_ignoring_bad(Records));
+                 sumIgnoringBad(Records));
 
     // `ilyth_check` (no extra info) used as a plain guard clause.
     auto checked_abs = [](s64 x) -> s64 {
