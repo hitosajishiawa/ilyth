@@ -34,6 +34,9 @@ endif()
 cmake_host_system_information(RESULT _cpu_num QUERY NUMBER_OF_LOGICAL_CORES)
 message(STATUS "Number of CPU logical cores on current server: ${_cpu_num}")
 math(EXPR _jobs "${_cpu_num} * 1 / 4")  # Depends on your machine. Use a larger ratio if you have enough memory.
+if(_jobs LESS 1)
+    set(_jobs 1)
+endif()
 set(CMAKE_BUILD_PARALLEL_LEVEL ${_jobs} CACHE STRING "Number of threads for parallel compilation")
 message(STATUS "Compiler default work jobs: ${CMAKE_BUILD_PARALLEL_LEVEL}")
 
