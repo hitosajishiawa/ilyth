@@ -120,6 +120,11 @@ constexpr auto max_u64 = std::numeric_limits<u64>::max();
 constexpr auto min_s64 = std::numeric_limits<s64>::min();
 constexpr auto max_s64 = std::numeric_limits<s64>::max();
 
+static_assert(min_u8 == 0);
+static_assert(min_u16 == 0);
+static_assert(min_u32 == 0);
+static_assert(min_u64 == 0);
+
 }  // namespace types
 
 }  // namespace ilyth
