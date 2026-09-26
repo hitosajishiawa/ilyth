@@ -1,4 +1,5 @@
-#include <ilyth/macros.h>
+#include <ilyth/assert.h>
+#include <ilyth/types.h>
 
 #include <array>
 #include <cstdlib>
@@ -85,7 +86,7 @@ int main()
 
 #ifdef NDEBUG
     std::println(
-        "Compiled in release mode. Assert failure will only bring logs.");
+        "Compiled in release mode. Assert failures will only bring logs.");
 #endif
 
     std::println("records = {{1, 2, -3, 4, -5, 6}}");
