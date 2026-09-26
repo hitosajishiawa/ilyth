@@ -1,12 +1,11 @@
-#include <ilyth/assert.h>
+#include <ilyth/platform.h>
+#include <ilyth/spinlock.h>
 #include <ilyth/types.h>
 
 #include <array>
 #include <atomic>
 #include <chrono>
 #include <cstddef>
-#include <cstdlib>
-#include <cstring>
 #include <latch>
 #include <mutex>
 #include <print>
@@ -20,13 +19,16 @@ using namespace ilyth::types;
 using ns_t = std::chrono::nanoseconds;
 
 constexpr auto Runs         = 7;
-constexpr auto threadCounts = std::array{1, 2, 4, 8, 12};
+constexpr auto threadCounts = std::array{1, 2, 4, 8, 16, 32};
 constexpr auto target       = u64{10'000'000};
 
 auto counter       = u64{};
 auto atomicCounter = std::atomic<u64>{0};
-auto mutex         = std::mutex{};
-auto shatex        = std::shared_mutex{};  // short for sharedMutex
+
+// One instance per mutual-exclusion strategy, so the captureless operations
+// below can reach it without capturing anything.
+template <class Lock>
+inline auto lockInstance = Lock{};
 
 // A benchmark entry: how to reset the shared state, and what one thread does.
 // Each operation is an independent chunk of work, so threads no longer need to
@@ -38,24 +40,23 @@ struct Benchmark
     void (*operation)(u64);
 };
 
+// Build an entry guarding `++counter` with `Lock`.
+template <class Lock>
+constexpr auto lockBenchmark(std::string_view name) -> Benchmark
+{
+    return Benchmark{name, [] { counter = 0; }, [](u64 operations) {
+        for (const auto _ : std::views::iota(min_u64, operations))
+        {
+            auto guard = std::lock_guard{lockInstance<Lock>};
+            ++counter;
+        }
+    }};
+}
+
 // Entries to be benchmarked
 constexpr auto benchmarks = std::array{
-    Benchmark{"mutex", [] { counter = 0; },
-              [](u64 operations) {
-    for (const auto _ : std::views::iota(min_u64, operations))
-    {
-        auto guard = std::lock_guard{mutex};
-        ++counter;
-    }
-}},
-    Benchmark{"shared_mutex", [] { counter = 0; },
-              [](u64 operations) {
-    for (const auto _ : std::views::iota(min_u64, operations))
-    {
-        auto guard = std::lock_guard{shatex};
-        ++counter;
-    }
-}},
+    lockBenchmark<std::mutex>("mutex"),
+    lockBenchmark<std::shared_mutex>("shared_mutex"),
     Benchmark{"atomic",
               [] { atomicCounter.store(0, std::memory_order_relaxed); },
               [](u64 operations) {
@@ -77,6 +78,10 @@ constexpr auto benchmarks = std::array{
         }
     }
 }},
+    lockBenchmark<ilyth::AtomicSpinlock>("atomic_spinlock"),
+#if ILYTH_PLATFORM_LINUX_GLIBC
+    lockBenchmark<ilyth::PthreadSpinlock>("pthread_spinlock"),
+#endif
 };
 
 /** What a thread should do. */
@@ -144,7 +149,7 @@ int main()
         {
             const auto avg_ns    = runBench(tc, bm);
             const auto ns_per_op = avg_ns / static_cast<double>(target);
-            std::print("{:<14} {:.2f} ns total, {:.2f} ns/op\n", bm.name,
+            std::print("{:<18} {:.2f} ns total, {:.2f} ns/op\n", bm.name,
                        avg_ns, ns_per_op);
         }
         std::println();
