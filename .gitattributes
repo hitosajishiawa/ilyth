@@ -1,13 +1,11 @@
-# 行尾策略：仓库内与工作区统一使用 LF
-# 该文件优先级高于 core.autocrlf，对所有 clone 该仓库的人生效。
+*.h linguist-language=C++
+
 * text=auto eol=lf
 
-# 供 Windows 直接执行的脚本仍需 CRLF
 *.bat text eol=crlf
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
 
-# 二进制文件不做任何行尾转换
 *.png  binary
 *.jpg  binary
 *.jpeg binary
