@@ -1,0 +1,36 @@
+root = true
+
+# 适用于所有文件
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C / C++ 源码：4 空格缩进
+[*.{c,cc,cpp,cxx,h,hh,hpp,hxx}]
+indent_style = space
+indent_size = 4
+
+# CMake 脚本：4 空格缩进
+[*.cmake]
+indent_style = space
+indent_size = 4
+
+[CMakeLists.txt]
+indent_style = space
+indent_size = 4
+
+# Markdown：保留行尾空格（用于换行），且不强制结尾空行
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+# JSON / YAML / TOML：2 空格缩进
+[*.{json,jsonc,yaml,yml,toml}]
+indent_style = space
+indent_size = 2
+
+# 供 Windows 直接执行的脚本仍使用 CRLF
+[*.{bat,cmd,ps1}]
+end_of_line = crlf
