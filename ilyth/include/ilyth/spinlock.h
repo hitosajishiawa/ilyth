@@ -1,7 +1,7 @@
 #ifndef ILYTH_SPINLOCK_H
 #define ILYTH_SPINLOCK_H
 
-#include "ilyth/platform.h"
+#include <ilyth/platform.h>
 
 #include <atomic>
 
