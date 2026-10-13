@@ -55,6 +55,8 @@ public:
          * @note Keep it last and implicit so its value is the count.
          *
          * @warning NOT a valid level. You should never use it in log.
+         *
+         * @todo C++26: deprecate it.
          */
         _COUNT,
     };

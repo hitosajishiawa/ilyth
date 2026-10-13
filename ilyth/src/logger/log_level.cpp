@@ -9,6 +9,11 @@
 /// list of level names. It will be unregistered at the end of this file.
 ///
 /// @note Manually keep it sync with definitions in `LogLevel::Level`.
+///
+/// @todo C++26: replace this X-macro (and the two `static_assert`s plus the
+/// `_COUNT` sentinel that exist only to keep it honest) with static reflection:
+/// `std::meta::enumerators_of(^Level)` + `std::define_static_array`. The public
+/// `ToString`/`FromString` signatures stay unchanged, so the swap is local.
 #define ILYTH_LOG_LEVEL_LIST(f) \
     f(DEBUG) f(INFO) f(WARN) f(ERROR) f(FATAL) f(OFF)
 
