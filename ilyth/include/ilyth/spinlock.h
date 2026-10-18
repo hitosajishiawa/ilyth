@@ -49,7 +49,7 @@ inline auto cpu_relax() noexcept -> void
 class AtomicSpinlock
 {
 private:
-    std::atomic_flag mutex{};
+    std::atomic_flag mMutex{};
 
 public:
     AtomicSpinlock()  = default;
@@ -60,9 +60,9 @@ public:
 
     void lock() noexcept
     {
-        while (mutex.test_and_set(std::memory_order_acquire))
+        while (mMutex.test_and_set(std::memory_order_acquire))
         {
-            while (mutex.test(std::memory_order_relaxed))
+            while (mMutex.test(std::memory_order_relaxed))
             {
                 cpu_relax();
             }
@@ -70,9 +70,9 @@ public:
     }
     [[nodiscard]] bool try_lock() noexcept
     {
-        return !mutex.test_and_set(std::memory_order_acquire);
+        return !mMutex.test_and_set(std::memory_order_acquire);
     }
-    void unlock() noexcept { mutex.clear(std::memory_order_release); }
+    void unlock() noexcept { mMutex.clear(std::memory_order_release); }
 };
 
 #if ILYTH_PLATFORM_LINUX_GLIBC
@@ -93,24 +93,24 @@ public:
 class PthreadSpinlock
 {
 private:
-    pthread_spinlock_t mutex{};
+    pthread_spinlock_t mMutex{};
 
 public:
     PthreadSpinlock() noexcept
     {
-        pthread_spin_init(&mutex, PTHREAD_PROCESS_PRIVATE);
+        pthread_spin_init(&mMutex, PTHREAD_PROCESS_PRIVATE);
     }
-    ~PthreadSpinlock() noexcept { pthread_spin_destroy(&mutex); }
+    ~PthreadSpinlock() noexcept { pthread_spin_destroy(&mMutex); }
 
     PthreadSpinlock(const PthreadSpinlock&)            = delete;
     PthreadSpinlock& operator=(const PthreadSpinlock&) = delete;
 
-    void lock() noexcept { pthread_spin_lock(&mutex); }
+    void lock() noexcept { pthread_spin_lock(&mMutex); }
     [[nodiscard]] bool try_lock() noexcept
     {
-        return pthread_spin_trylock(&mutex) == 0;
+        return pthread_spin_trylock(&mMutex) == 0;
     }
-    void unlock() noexcept { pthread_spin_unlock(&mutex); }
+    void unlock() noexcept { pthread_spin_unlock(&mMutex); }
 };
 
 #endif  // ILYTH_PLATFORM_LINUX_GLIBC
