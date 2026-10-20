@@ -13,55 +13,74 @@ class ILYTH_API LogLevel final
 {
 public:
     /**
-     * @note DO NOT explicit assign values to enumerators, or the
-     * metaprogramming tricks will broken.
+     * @brief Log verbosity, ordered from least to most severe.
+     *
+     * @internal
+     * Do not explicitly assign values to the enumerators: the metaprogramming
+     * tricks (to be deprecated in C++26) and the ordering rule below both break
+     * if you do. Declarations are ordered from least to most important, with
+     * @ref OFF last; `Logger::shouldLog` and the level-name table rely on this.
      */
     enum class Level : types::u8
     {
         /**
-         * Mark debug related informations. For example, the value of vars.
+         * @brief Debug information, such as variable values.
          */
         DEBUG,
         /**
-         * Mark running smoothly. For example, database link successfully.
+         * @brief Normal progress, such as "server launching..." or "database
+         * linked successfully".
          */
         INFO,
         /**
-         * Mark exceptions or potential bugs that won't break following
-         * operations or disturb other functions.
+         * @brief Exceptions or potential bugs that neither break subsequent
+         * operations nor disturb other components.
          */
         WARN,
         /**
-         * Mark operation failures or exceptions that need examinations.
+         * @brief Operation failures or exceptions that need investigation.
          */
         ERROR,
         /**
-         * Mark fatal errors. If a fatal error occurs, it is not suggested to
-         * go on.
+         * @brief Fatal errors.
+         *
+         * It is not recommended to continue after one; execution is usually
+         * followed by termination.
          */
         FATAL,
         /**
-         * Off the log in some situations, such as benchmark.
+         * @brief Disable logging, e.g. in benchmarks.
          */
         OFF,
 
         /**
-         * Sentinel, equals the number of real log levels for metaprogramming
-         * tricks. Only for internal implementations.
+         * @brief Sentinel equal to the number of real levels.
          *
-         * It exists only so that the implementation can `static_assert` that
-         * its own level name list stays in sync with this enum.
+         * Only for internal implementations: it exists so that they can
+         * `static_assert` that their level-name table stays in sync with this
+         * enum.
          *
-         * @note Keep it last and implicit so its value is the count.
+         * @internal Keep it last and implicit so that its value is the count.
          *
-         * @warning NOT a valid level. You should never use it in log.
+         * @warning Not a valid level; never use it in a log call.
          *
          * @todo C++26: deprecate it.
          */
         _COUNT,
     };
 
+    /**
+     * @brief Get the name of @p lv .
+     *
+     * @return The enumerator name, or `"UNKNOWN"` if @p lv is not valid.
+     */
     [[nodiscard]] static auto ToString(Level lv) noexcept -> std::string_view;
+    /**
+     * @brief Parse a level name produced by @ref ToString .
+     *
+     * @return The matching level, or @ref Level::OFF as the fallback if
+     * @p value is unknown.
+     */
     [[nodiscard]] static auto FromString(std::string_view value) noexcept
         -> Level;
 };
