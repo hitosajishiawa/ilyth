@@ -4,6 +4,7 @@
 #include <ilyth/export.h>
 #include <ilyth/types.h>
 
+#include <format>
 #include <string_view>
 
 namespace ilyth
@@ -86,5 +87,24 @@ public:
 };
 
 }  // namespace ilyth
+
+/**
+ * Lets `std::format` render a level by its name, e.g. `"{}"` -> `"INFO"`.
+ * Declared before any use so `std::format_to_n` below picks it up.
+ */
+template <>
+struct std::formatter<ilyth::LogLevel::Level, char>
+{
+    constexpr auto parse(std::format_parse_context& ctx)
+    {
+        return ctx.begin();  // No spec supported; must sit right before '}'.
+    }
+
+    auto format(ilyth::LogLevel::Level level, std::format_context& ctx) const
+    {
+        const auto name = ilyth::LogLevel::ToString(level);
+        return std::copy(name.begin(), name.end(), ctx.out());
+    }
+};
 
 #endif
