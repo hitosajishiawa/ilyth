@@ -8,7 +8,7 @@
 #if defined(ILYTH_SHARED_LIB)  // Shared library.
                                // CURRENTLY UNDEFINED, TODO
 
-    #if defined(_WIN32)  // Windows
+    #if ILYTH_PLATFORM_WIN32  // Windows
         #if defined(ILYTH_BUILDING_LIB)
             #define ILYTH_API __declspec(dllexport)
         #else

@@ -12,7 +12,20 @@
     #define ILYTH_PLATFORM_LINUX_GLIBC 0
 #endif
 
-// Architecture. Unlike `__GLIBC__` above, these are real compiler-predefined
+// Linux regardless of the C library (glibc, musl, ...).
+#if defined(__linux__)
+    #define ILYTH_PLATFORM_LINUX 1
+#else
+    #define ILYTH_PLATFORM_LINUX 0
+#endif
+
+#if defined(_WIN32)
+    #define ILYTH_PLATFORM_WIN32 1
+#else
+    #define ILYTH_PLATFORM_WIN32 0
+#endif
+
+// Architecture, predefined by compiler.
 // macros, so the checks do not depend on include order.
 #if defined(__x86_64__) || defined(__i386__)
     #define ILYTH_PLATFORM_ARCH_X86 1

@@ -51,7 +51,7 @@ auto format_timestamp(char* out,
     {
         const std::time_t secs = std::chrono::system_clock::to_time_t(whole);
         std::tm local{};
-#if defined(_WIN32)
+#if ILYTH_PLATFORM_WIN32
         ::localtime_s(&local, &secs);
 #else
         ::localtime_r(&secs, &local);

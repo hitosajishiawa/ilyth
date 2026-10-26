@@ -29,7 +29,7 @@ struct LogEntry
     /// Message from the caller.
     std::string_view message;
     std::chrono::system_clock::time_point timestamp;
-    /// Elapsed time since first use.
+    /// Elapsed time since launch.
     std::chrono::steady_clock::duration elapsed{};
     types::u64 threadID = 0;
     /// Reserved; always 0 until fibers exist.

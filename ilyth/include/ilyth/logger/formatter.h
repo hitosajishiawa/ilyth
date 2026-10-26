@@ -35,17 +35,20 @@ using EntryFormatter = std::size_t (*)(const LogEntry& entry,
                                        std::span<char> out);
 
 /**
- * @brief Default formatter: `"<time> [<level>] <file>:<line> <message>\n"`.
+ * @brief Default formatter:
+ * `[<timestamp> ; <elapsed>] [<level>] "<file>:<line>"
+ * [thread:<threadName>(id=<>threadID), fiber_id=<fiberID>] <message>\n`.
  *
  * `<time>` precision is @ref detail::DefaultTimestampDigits .
  */
-inline auto defaultFormatter(const LogEntry& entry, std::span<char> out)
+inline auto defaultFormatter(const LogEntry& e, std::span<char> out)
     -> std::size_t
 {
     const auto result = std::format_to_n(
         out.data(), static_cast<std::ptrdiff_t>(out.size()),
-        "[{}] [{}] {}:{} {}\n", Timestamp{entry.timestamp}, entry.level,
-        entry.location.file_name(), entry.location.line(), entry.message);
+        "[{} ; {}] [{}] \"{}:{}\" [thread:{}(id={}), fiber_id={}] {}\n",
+        Timestamp{e.timestamp}, e.elapsed, e.level, e.location.file_name(),
+        e.location.line(), e.threadName, e.threadID, e.fiberID, e.message);
     return static_cast<std::size_t>(result.size);
 }
 
