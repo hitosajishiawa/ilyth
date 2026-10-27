@@ -1,5 +1,5 @@
-#ifndef ILYTH_LOGGER_LOGLEVEL_H
-#define ILYTH_LOGGER_LOGLEVEL_H
+#ifndef ILYTH_LOGGER_LEVEL_H
+#define ILYTH_LOGGER_LEVEL_H
 
 #include <ilyth/export.h>
 #include <ilyth/types.h>

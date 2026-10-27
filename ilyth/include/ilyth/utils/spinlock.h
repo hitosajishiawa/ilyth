@@ -1,5 +1,5 @@
-#ifndef ILYTH_SPINLOCK_H
-#define ILYTH_SPINLOCK_H
+#ifndef ILYTH_UTILS_SPINLOCK_H
+#define ILYTH_UTILS_SPINLOCK_H
 
 #include <ilyth/platform.h>
 

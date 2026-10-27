@@ -1,4 +1,4 @@
-#include <ilyth/thread.h>
+#include <ilyth/utils/thread.h>
 
 #include <ilyth/platform.h>
 

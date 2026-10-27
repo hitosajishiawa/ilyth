@@ -1,4 +1,4 @@
-#include <ilyth/logger/log_level.h>
+#include <ilyth/logger/level.h>
 
 #include <array>
 #include <cstddef>

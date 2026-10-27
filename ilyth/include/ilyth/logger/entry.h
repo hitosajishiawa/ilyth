@@ -1,7 +1,7 @@
 #ifndef ILYTH_LOGGER_ENTRY_H
 #define ILYTH_LOGGER_ENTRY_H
 
-#include <ilyth/logger/log_level.h>
+#include <ilyth/logger/level.h>
 #include <ilyth/types.h>
 
 #include <chrono>

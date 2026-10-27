@@ -1,6 +1,6 @@
 #include <ilyth/platform.h>
-#include <ilyth/spinlock.h>
 #include <ilyth/types.h>
+#include <ilyth/utils/spinlock.h>
 
 #include <array>
 #include <atomic>

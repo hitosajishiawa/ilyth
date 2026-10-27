@@ -1,5 +1,5 @@
-#ifndef ILYTH_THREAD_H
-#define ILYTH_THREAD_H
+#ifndef ILYTH_UTILS_THREAD_H
+#define ILYTH_UTILS_THREAD_H
 
 #include <ilyth/export.h>
 #include <ilyth/types.h>
