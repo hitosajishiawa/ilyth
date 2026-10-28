@@ -18,8 +18,8 @@ namespace ilyth
  * the caller re-invokes it with an exactly sized buffer (two-pass), so a
  * formatter must tolerate writing a truncated prefix on the first pass.
  *
- * Formatters are stateless, so any function with this signature works; group
- * several in a namespace and pass their address:
+ * Formatters are stateless, so any function with this signature works. It is
+ * recommended to group several in a namespace and to pass their address:
  * ```
  * namespace fmts
  * {
@@ -28,8 +28,7 @@ namespace ilyth
  * }
  * logger.setFormatter(&fmts::compact);
  * ```
- * A struct works too, but its members must be `static`; non-static members are
- * member pointers and can't be converted to `EntryFormatter`.
+ * A struct with static members works too. Choose the one you prefer.
  */
 using EntryFormatter = std::size_t (*)(const LogEntry& entry,
                                        std::span<char> out);

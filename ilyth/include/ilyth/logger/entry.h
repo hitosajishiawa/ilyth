@@ -15,8 +15,7 @@ namespace ilyth
  * @brief One log record, handed to the formatter policy.
  *
  * Public on purpose: a policy reads its fields by name, which keeps the format
- * self-documenting and free of a positional contract (compare writing a bare
- * `std::format` call whose `{}` order becomes a frozen contract).
+ * self-documenting and free of a positional contract.
  *
  * @note Every string field is a non-owning view. They stay valid for the
  * duration of the enclosing log statement only.

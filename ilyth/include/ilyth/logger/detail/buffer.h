@@ -16,15 +16,6 @@ inline constexpr auto FormattedEntryInlineCapacity = std::size_t{256};
 /**
  * @brief Contiguous scratch buffer: stack array first, whole-buffer heap
  * fallback on overflow.
- *
- * Deliberately not segmented (stack head + heap tail). A single
- * `std::format_to_n` call needs one contiguous destination, so a partial spill
- * buys nothing: on overflow the whole content is produced on the heap instead.
- *
- * @note No `value_type` / `push_back(char)` on purpose -- those exist only to
- * satisfy `std::back_inserter`, which feeds the buffer one character at a time
- * (a branch plus a byte store per char, verified in generated code). Fill via
- * @ref writable / @ref commit / @ref allocate instead.
  */
 template <std::size_t InlineCapacity>
 class LoggerBuffer
@@ -47,19 +38,28 @@ public:
         return {mHeapStorage.data(), n};
     }
 
+    /// Direct access to the underlying contiguous storage.
     [[nodiscard]] auto data() const noexcept -> const char*
     {
         return mHeapStorage.empty() ? mInlineStorage.data()
                                     : mHeapStorage.data();
     }
+
+    /// Get the length of written chars.
     [[nodiscard]] auto size() const noexcept -> std::size_t { return mLength; }
+
+    /// Get a sv of written chars in the underlying storage.
     [[nodiscard]] auto view() const noexcept -> std::string_view
     {
         return {data(), size()};
     }
 
 private:
-    std::array<char, InlineCapacity> mInlineStorage{};
+    /**
+     * @note Intentionally left uninitialized: avoid the zero-filling on every
+     * log call. This is safe because no byte is ever read before it is written.
+     */
+    std::array<char, InlineCapacity> mInlineStorage;
     std::vector<char> mHeapStorage;
     std::size_t mLength = 0;
 };
