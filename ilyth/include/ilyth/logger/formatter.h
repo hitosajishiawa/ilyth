@@ -37,7 +37,7 @@ using EntryFormatter = std::size_t (*)(const LogEntry& entry,
 /**
  * @brief Default formatter:
  * `[<timestamp> ; <elapsed>] [<level>] "<file>:<line>"
- * [thread:<threadName>(id=<>threadID), fiber_id=<fiberID>] <message>\n`.
+ * [thread:<threadName>(id=<threadID>), fiber_id=<fiberID>] <message>\n`.
  *
  * `<time>` precision is @ref detail::DefaultTimestampDigits .
  */
