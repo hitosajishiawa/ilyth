@@ -72,7 +72,7 @@ private:
  * write a truncated prefix on the first pass.
  */
 template <std::size_t InlineCapacity, class Producer>
-auto format_two_pass(LoggerBuffer<InlineCapacity>& buffer, Producer&& produce)
+auto formatTwoPass(LoggerBuffer<InlineCapacity>& buffer, Producer&& produce)
     -> void
 {
     const auto room   = buffer.writable();
