@@ -14,7 +14,7 @@ namespace ilyth::detail
 [[nodiscard]] auto currentFiberId() noexcept -> types::u64;
 
 /**
- * @return Time elapsed since first use (process-start proxy).
+ * @return Time elapsed since the process launched.
  */
 [[nodiscard]] auto elapsedSinceLaunch() noexcept
     -> std::chrono::steady_clock::duration;

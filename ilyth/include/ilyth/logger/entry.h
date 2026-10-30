@@ -2,9 +2,9 @@
 #define ILYTH_LOGGER_ENTRY_H
 
 #include <ilyth/logger/level.h>
+#include <ilyth/logger/time.h>
 #include <ilyth/types.h>
 
-#include <chrono>
 #include <source_location>
 #include <string_view>
 
@@ -27,9 +27,10 @@ struct LogEntry
     std::string_view loggerName;
     /// Message from the caller.
     std::string_view message;
-    std::chrono::system_clock::time_point timestamp;
-    /// Elapsed time since launch.
-    std::chrono::steady_clock::duration elapsed{};
+    /// Wall-clock time the statement was issued.
+    Timestamp timestamp{};
+    /// Time elapsed since process launch.
+    Elapsed elapsed{};
     types::u64 threadID = 0;
     /// Reserved; always 0 until fibers exist.
     types::u64 fiberID = 0;

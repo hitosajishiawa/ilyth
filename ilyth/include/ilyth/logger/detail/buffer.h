@@ -10,9 +10,6 @@
 namespace ilyth::detail
 {
 
-inline constexpr auto LogMessageInlineCapacity     = std::size_t{128};
-inline constexpr auto FormattedEntryInlineCapacity = std::size_t{256};
-
 /**
  * @brief Contiguous scratch buffer: stack array first, whole-buffer heap
  * fallback on overflow.
@@ -68,8 +65,7 @@ private:
  * @brief Two-pass fill: produce into the inline region, retry on the heap only
  * if it does not fit.
  *
- * @p produce takes the destination span and returns the needed length; it may
- * write a truncated prefix on the first pass.
+ * @p produce takes the destination span and returns the needed length.
  */
 template <std::size_t InlineCapacity, class Producer>
 auto formatTwoPass(LoggerBuffer<InlineCapacity>& buffer, Producer&& produce)

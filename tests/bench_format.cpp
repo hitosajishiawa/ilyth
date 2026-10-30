@@ -42,8 +42,8 @@ int main(int argc, char** argv)
     entry.level      = ilyth::LogLevel::Level::INFO;
     entry.loggerName = "bench/logger";
     entry.message    = "hello 42 world x";
-    entry.timestamp  = base;
-    entry.elapsed    = std::chrono::milliseconds(1234);
+    entry.timestamp  = ilyth::Timestamp{base};
+    entry.elapsed    = ilyth::Elapsed{std::chrono::milliseconds(1234)};
     entry.threadID   = 12345;
     entry.fiberID    = 0;
     entry.threadName = "main";
@@ -53,15 +53,15 @@ int main(int argc, char** argv)
     // Full line, same second (what a datetime cache would be able to reuse).
     const double full_fixed = bench(n, [&](int) {
         std::array<char, 512> buf;
-        sink += ilyth::defaultFormatter(entry, std::span<char>(buf));
+        sink += ilyth::defaultVerboseFormatter(entry, std::span<char>(buf));
     });
 
     // Full line, second advances every call.
     const double full_varying = bench(n, [&](int i) {
         ilyth::LogEntry e = entry;
-        e.timestamp       = base + std::chrono::seconds(i);
+        e.timestamp       = ilyth::Timestamp{base + std::chrono::seconds(i)};
         std::array<char, 512> buf;
-        sink += ilyth::defaultFormatter(e, std::span<char>(buf));
+        sink += ilyth::defaultVerboseFormatter(e, std::span<char>(buf));
     });
 
     // Full line with the timestamp already rendered (what a cache gives).
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
         sink += static_cast<std::uint64_t>(
             std::format_to_n(buf.data(),
                              static_cast<std::ptrdiff_t>(buf.size()),
-                             "{:%Y-%m-%d %H:%M:%S}", entry.timestamp)
+                             "{:%Y-%m-%d %H:%M:%S}", entry.timestamp.value)
                 .size);
     });
 
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
     const double cached_ts                      = bench(n, [&](int) {
         const auto sec = static_cast<std::time_t>(
             std::chrono::duration_cast<std::chrono::seconds>(
-                entry.timestamp.time_since_epoch())
+                entry.timestamp.value.time_since_epoch())
                 .count());
         if (sec != last_second)
         {

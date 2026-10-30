@@ -1,46 +1,17 @@
-#include <ilyth/logger/detail/timestamp.h>
+#include <ilyth/logger/detail/time.h>
 
-#include <algorithm>
-#include <array>
 #include <cstddef>
-#include <cstdint>
 #include <cstring>
 #include <ctime>
 
 namespace ilyth::detail
 {
 
-namespace
-{
-
-/// Hard resolution bound. It makes no sense to modify the value.
-constexpr int MaxDigits = 9;
-
-/// `10^0 .. 10^MaxDigits`, in ascending order.
-constexpr auto Pow10 = []() {
-    std::array<std::int64_t, MaxDigits + 1> table{};
-    std::int64_t value = 1;
-    for (auto& entry : table)
-    {
-        entry = value;
-        value *= 10;
-    }
-    return table;
-}();
-
-static_assert(Pow10.front() == 1);
-static_assert(Pow10.back() == std::chrono::nanoseconds::period::den);
-
-}  // namespace
-
 auto format_timestamp(char* out,
                       std::size_t capacity,
                       std::chrono::system_clock::time_point tp,
                       int digits) noexcept -> std::size_t
 {
-    // Clamp to the sub-second digits we can render.
-    digits = std::clamp(digits, 0, MaxDigits);
-
     // the expensive part: calendar decomposition, cached per second
     thread_local std::chrono::sys_seconds cached_second{};
     thread_local std::size_t cached_len           = 0;
@@ -61,7 +32,7 @@ auto format_timestamp(char* out,
         cached_second = whole;
     }
 
-    // copy the cached prefix, then append the sub-second digits
+    // copy the cached prefix, then append the sub-second tail
     std::size_t written = 0;
     const auto emit     = [&](const char* src, std::size_t len) {
         const std::size_t room = capacity > written ? capacity - written : 0;
@@ -75,23 +46,12 @@ auto format_timestamp(char* out,
 
     emit(cached, cached_len);
 
-    if (digits > 0)
-    {
-        emit(".", 1);
-
-        const auto sub =
-            std::chrono::duration_cast<std::chrono::nanoseconds>(tp - whole)
-                .count();
-        std::int64_t fraction = sub / Pow10[MaxDigits - digits];
-
-        char buffer[MaxDigits];
-        for (int i = digits - 1; i >= 0; --i)
-        {
-            buffer[i] = static_cast<char>('0' + fraction % 10);
-            fraction /= 10;
-        }
-        emit(buffer, static_cast<std::size_t>(digits));
-    }
+    // `tp - whole` is below one second, so it *is* the sub-second remainder.
+    const auto sub =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(tp - whole)
+            .count();
+    char tail[MaxFractionDigits + 1];
+    emit(tail, render_fraction(tail, sub, digits));
 
     return written;
 }
